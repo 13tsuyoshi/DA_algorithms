@@ -38,19 +38,16 @@ DAアルゴリズムのいろいろ（？）
 
 ### Webページ
 
-* [経済学で理想のパートナーを探そう！ - ゲール＝シャプレーアルゴリズムを合コンのマッチング問題から考える](http://toyokeizai.net/articles/-/11584)  
-
-  安定結婚問題（1対1）におけるGSアルゴリズムのわかりやすい解説。  
-
-
-* [安定マッチング - 各種アルゴリズムの C++ による実装](http://www.prefield.com/algorithm/misc/stable_matching.html)
-
-  GSアルゴリズムに加えて、それ以外の安定マッチング（男女の効用の和を最大にするマッチング、男女の効用差を最小にするマッチング）についても解説されている。タイや不完全なリストを許した時の具体的な実装に関するヒントも有。  
+* _[経済学で理想のパートナーを探そう！ - ゲール＝シャプレーアルゴリズムを合コンのマッチング問題から考える](http://toyokeizai.net/articles/-/11584)_  
+安定結婚問題（1対1）におけるGSアルゴリズムのわかりやすい解説。  
 
 
-* [Introduction to Market Design and Two-Sided Matching Markets](https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxmdWhpdG9rb2ppbWFlY29ub21pY3N8Z3g6NmVkYWU1ZGU5NDZkMWZh)  
+* _[安定マッチング - 各種アルゴリズムの C++ による実装](http://www.prefield.com/algorithm/misc/stable_matching.html)_  
+GSアルゴリズムに加えて、それ以外の安定マッチング（男女の効用の和を最大にするマッチング、男女の効用差を最小にするマッチング）についても解説されている。タイや不完全なリストを許した時の具体的な実装に関するヒントも有。  
 
-  Fuhito Kojima先生の（授業?）スライド。  
+
+* _[Introduction to Market Design and Two-Sided Matching Markets](https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxmdWhpdG9rb2ppbWFlY29ub21pY3N8Z3g6NmVkYWU1ZGU5NDZkMWZh)_  
+Fuhito Kojima先生の（授業?）スライド。  
 
 
 
