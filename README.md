@@ -14,18 +14,15 @@
 ※以下にあるPaperは全て[SSL-VPN Gateway](https://gateway.itc.u-tokyo.ac.jp/dana-na/auth/url_default/welcome.cgi)を使って（学外からでも）読める。
 
 * _D. Gale and L.S. Shapley, "[College Admissions and the Stability of Marriage](http://www.jstor.org/stable/2312726)," American Mathematical Monthly 69 (1962), 9-15_  
-
   元論文。安定結婚問題（1対1）、学校選択問題（多対1）の定式化、GSアルゴリズムの導入・安定マッチングを必ず求められることの証明  
-<br />
+
 
 * A.E. Roth, "[Deferred Acceptance Algorithms: History, Theory, Practice, and Open Questions](http://link.springer.com/article/10.1007/s00182-008-0117-6)," International Journal of Game Theory 36 (2008), 537-569  
+  DAアルゴリズムのいろいろ（？
 
-  DAアルゴリズムのいろいろ（？）  
-<br />
 
 * 坂井豊貴・藤中裕二・若山琢磨『メカニズムデザイン -資源配分制度の設計とインセンティブ-』(2008) ミネルヴァ書房  
-
-第7章で安定結婚問題(1対1)におけるGSアルゴリズムについて詳しく（証明付きで）解説されている。また、apply側が虚偽の選好を表明するインセンティブを持たないこと、一方host側はそれを持つことが示されている。多対1マッチングについては少しだけ。  
+  第7章で安定結婚問題(1対1)におけるGSアルゴリズムについて詳しく（証明付きで）解説されている。また、apply側が虚偽の選好を表明するインセンティブを持たないこと、一方host側はそれを持つことが示されている。多対1マッチングについては少しだけ。  
 
 
 * 小島武仁・安田洋祐「マッチング・マーケットデザイン」『経済セミナー』2009年4・5月号  
