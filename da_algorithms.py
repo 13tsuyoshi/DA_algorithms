@@ -76,6 +76,11 @@ def gale_shapley(applicant_preferences, host_preferences):
      print(matching)
 
 
+def is_stable_matching(matching, applicant_preferences, host_preferences):
+     pass
+
+
+
 applicant_matrix = np.array(
     [[0, 1, 2, 3, 4, False], 
      [4, 1, 2, 0, 3, False],
