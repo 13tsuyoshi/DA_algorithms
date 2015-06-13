@@ -13,7 +13,7 @@
 
 ※以下にあるPaperは全て[SSL-VPN Gateway](https://gateway.itc.u-tokyo.ac.jp/dana-na/auth/url_default/welcome.cgi)を使って（学外からでも）読める。
   
-* D. Gale and L.S. Shapley, "[College Admissions and the Stability of Marriage](http://www.jstor.org/stable/2312726)," American Mathematical Monthly 69 (1962), 9-15  
+* __D. Gale and L.S. Shapley, "[College Admissions and the Stability of Marriage](http://www.jstor.org/stable/2312726)," American Mathematical Monthly 69 (1962), 9-15__  
 元論文。安定結婚問題（1対1）、学校選択問題（多対1）の定式化、GSアルゴリズムの導入・安定マッチングを必ず求められることの証明
 
 
@@ -48,7 +48,7 @@ GSアルゴリズムに加えて、それ以外の安定マッチング（男女
 タイや不完全なリストを許した時の具体的な実装に関するヒントも有。  
 
 
-* _[Introduction to Market Design and Two-Sided Matching Markets](https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxmdWhpdG9rb2ppbWFlY29ub21pY3N8Z3g6NmVkYWU1ZGU5NDZkMWZh)_  
+* __[Introduction to Market Design and Two-Sided Matching Markets](https://docs.google.com/viewer?a=v&pid=sites&srcid=ZGVmYXVsdGRvbWFpbnxmdWhpdG9rb2ppbWFlY29ub21pY3N8Z3g6NmVkYWU1ZGU5NDZkMWZh)__  
 Fuhito Kojima先生の（授業?）スライド。  
 
 
