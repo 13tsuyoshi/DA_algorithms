@@ -231,7 +231,14 @@ def matching_score(matching, applicant_prefers_input, host_prefers_input):
 
 
 if __name__ == '__main__':
+     start = time.time()
+     for i in range(1000):
+          app_table = random_preference_table(5, 5)
+          hos_table = random_preference_table(5, 5)
+          matching = gale_shapley(app_table, hos_table)
+     print(time.time() - start)
 
+     """
      for i in range(10):
           print("\n+-------------------------------------+\n")
           print("{0}回目".format(i))
@@ -257,6 +264,7 @@ if __name__ == '__main__':
                print(all_match[i], ": ", score_match[i])
 
           print("です。")
+     """
 
 
 
