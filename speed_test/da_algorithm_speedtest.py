@@ -10,7 +10,7 @@ import time
 np.set_printoptions(threshold=np.nan)
 
 
-# 1対1のケースのGAアルゴリズム
+# 1対1のケースのDAアルゴリズム
 def gale_shapley(applicant_prefers_input, host_prefers_input):
 
      # NumPy Arrayに変換
@@ -45,7 +45,7 @@ def gale_shapley(applicant_prefers_input, host_prefers_input):
                host_preference = host_preferences[host]
 
                # 相手が未マッチングなら
-               if host_preference[-1] == False:
+               if host_preference[-1] == 0:
                     host_preference[-1] = 1
                     applicant_preference[-1] = 1
                     matching[applicant] = host
@@ -73,17 +73,17 @@ def gale_shapley(applicant_prefers_input, host_prefers_input):
      return matching
 
 
-# 1対1のケースのGAアルゴリズム
+# 1対1のケースのDAアルゴリズム
+# host側の選好表を[1位の番号, 2位の番号,...]ではなく、[app1番の順位, app2番の順位,...]と変更してからやってみる
 def gale_shapley2(applicant_prefers_input, host_prefers_input):
+     start1 = time.time()
 
      # NumPy Arrayに変換
      applicant_preferences = np.array(applicant_prefers_input, dtype=int)
+     host_preferences = np.array(applicant_prefers_input, dtype=int)
 
-     aaa = [sorted(hp) for hp in host_prefers_input]
-     host_preferences = np.array(aaa, dtype=int)
-
-     print(host_prefers_input)
-     print(aaa)
+     # ソート
+     host_preferences = np.argsort(host_preferences, axis=-1)
 
      # 選好表の行列数をチェック
      row, col = applicant_preferences.shape
@@ -102,6 +102,9 @@ def gale_shapley2(applicant_prefers_input, host_prefers_input):
      # {man0: woman3, man1, woman0,...}というマッチングを入れる
      matching = {}
 
+     stop1 = time.time() - start1
+     print("準備は " + str(stop1) + " 秒でした")
+     start2 = time.time()
      while len(stack) > 0:
           # スタックから1人応募者を取り出す
           applicant = stack.pop()
@@ -113,7 +116,7 @@ def gale_shapley2(applicant_prefers_input, host_prefers_input):
                host_preference = host_preferences[host]
 
                # 相手が未マッチングなら
-               if host_preference[-1] == False:
+               if host_preference[-1] == 0:
                     host_preference[-1] = 1
                     applicant_preference[-1] = 1
                     matching[applicant] = host
@@ -125,8 +128,8 @@ def gale_shapley2(applicant_prefers_input, host_prefers_input):
                     matched = [k for k, v in matching.items() if v == host][0]
 
                     # 新しい応募者と、既にマッチング済みの相手の、受け入れ側における選好順位を比較
-                    rank_matched = np.where(host_preference[:-1] == matched)[0][0]
-                    rank_applicant = np.where(host_preference[:-1] == applicant)[0][0]
+                    rank_matched = host_preference[matched]
+                    rank_applicant = host_preference[applicant]
                     
                     # もし受け入れ側が新しい応募者の方を好むなら
                     if rank_matched > rank_applicant:
@@ -138,32 +141,123 @@ def gale_shapley2(applicant_prefers_input, host_prefers_input):
                          stack.append(matched)
                          break
 
+     stop2 = time.time() - start2
+     print("LOOPは " + str(stop2) + " 秒でした")
      return matching
+
+
+# host側の選好表を[1位の番号, 2位の番号,...]ではなく、[app1番の順位, app2番の順位,...]と変更してからやってみる
+def gale_shapley3(applicant_prefers_input, host_prefers_input):
+     start1 = time.time()
+
+     # NumPy Arrayに変換
+     applicant_preferences = np.array(applicant_prefers_input, dtype=int)
+     host_preferences = np.array(applicant_prefers_input, dtype=int)
+
+     # ソート
+     host_preferences = np.argsort(host_preferences, axis=-1)
+
+     # 選好表の行列数をチェック
+     row, col = applicant_preferences.shape
+     row_host, col_host = host_preferences.shape
+     if row != col_host or col != row_host:
+          exit(-1)
+
+     # 未マッチング者のリスト
+     stack = list(range(row))
+
+     # マッチングを入れる
+     applicant_matchings = np.zeros(row, dtype=int) - 1
+     host_matchings = np.zeros(row, dtype=int) - 1
+
+     stop1 = time.time() - start1
+     print("準備は " + str(stop1) + " 秒でした")
+     start2 = time.time()
+     while len(stack) > 0:
+          # スタックから1人応募者を取り出す
+          applicant = stack.pop()
+
+          # 取り出した応募者の選好表
+          applicant_preference = applicant_preferences[applicant]
+
+          for host in applicant_preference:
+               host_preference = host_preferences[host]
+
+               # 既にマッチング済みの相手を代入
+               matched = host_matchings[host]
+
+               # 相手が未マッチングなら
+               if matched == -1:
+                    applicant_matchings[applicant] = host
+                    host_matchings[host] = applicant
+                    break
+
+               # 相手がマッチング済なら
+               else:
+                    # 新しい応募者と、既にマッチング済みの相手の、受け入れ側における選好順位を比較
+                    rank_matched = host_preference[matched]
+                    rank_applicant = host_preference[applicant]
+                    
+                    # もし受け入れ側が新しい応募者の方を好むなら
+                    if rank_matched > rank_applicant:
+                         applicant_matchings[applicant] = host
+                         host_matchings[host] = applicant
+                         applicant_matchings[matched] = -1
+                         stack.append(matched)
+                         break
+
+     stop2 = time.time() - start2
+     print("LOOPは " + str(stop2) + " 秒でした")
+     return [applicant_matchings]
+
 
 
 # 選好表を適当に作る
 def random_preference_table(row, col):
-     output = []
-     li = list(range(col))
-     for i in range(row):
-          li2 = li[:]
-          shuffle(li2)
-          output.append(li2)
 
-     return output
+     def __sshuffle(li):
+          shuffle(li)
+          return li
+
+     return [__sshuffle(list(range(col))) for i in range(row)]
 
 
 if __name__ == '__main__':
-     for i in range(1):
-          app_table = random_preference_table(10, 10)
-          hos_table = random_preference_table(10, 10)
-          print("スタート!")
-          start = time.time()
-          matching = gale_shapley2(app_table, hos_table)
-          stop = time.time() - start
-          print("ストップ！")
-          #print(matching)
-          print("実行時間は " + str(stop) + " 秒でした")
+     app_table = random_preference_table(2000, 2000)
+     hos_table = random_preference_table(2000, 2000)
+
+
+     print("gale-shapley2 スタート!")
+     start = time.time()
+     matching = gale_shapley2(app_table, hos_table)
+     stop = time.time() - start
+     print("ストップ！")
+     print("実行時間は " + str(stop) + " 秒でした\n")
+     #print(matching)
+
+     print("gale-shapley3 スタート!")
+     start = time.time()
+     matching = gale_shapley3(app_table, hos_table)
+     stop = time.time() - start
+     print("ストップ！")
+     print("実行時間は " + str(stop) + " 秒でした\n")
+     #print(matching)
+     
+     """
+     print("gale-shapley スタート!")
+     start = time.time()
+     matching = gale_shapley(app_table, hos_table)
+     stop = time.time() - start
+     print("ストップ！")
+     print("実行時間は " + str(stop) + " 秒でした\n")
+
+     print("gale-shapley2 スタート!")
+     start = time.time()
+     matching = gale_shapley2(app_table, hos_table)
+     stop = time.time() - start
+     print("ストップ！")
+     print("実行時間は " + str(stop) + " 秒でした")
+     """
 
 
 
