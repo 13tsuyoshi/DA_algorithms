@@ -1,11 +1,15 @@
-# Deferred-Acceptanceアルゴリズム（Gale-Shapleyアルゴリズム）
+# Deferred-Acceptanceアルゴリズム
 
+[安定結婚問題](https://ja.wikipedia.org/wiki/%E5%AE%89%E5%AE%9A%E7%B5%90%E5%A9%9A%E5%95%8F%E9%A1%8C)や大学選択問題を解くDeferred-Acceptanceアルゴリズム（Gale-Shapleyアルゴリズム）を実装してみる。
+
+## 現状
 1対1のDAアルゴリズムは完成。
 
-要求仕様: https://github.com/OyamaZemi/exercises2015/tree/master/ex02
+要求仕様: https://github.com/OyamaZemi/exercises2015/tree/master/ex02  
 実行結果: https://github.com/13tsuyoshi/DA_algorithms/blob/master/DA_Algorithms.ipynb
 
-今後簡単にできそうなこと
+
+### 今後簡単にできそうなこと
 
 * DAアルゴリズムから出てきたマッチングが、本当にStableかを確かめる（Blocking Pairが無いことを確かめる）関数を作る
 * apply側の申し込み順を入れ替えても、結果は変わらないことを確かめる
@@ -15,16 +19,13 @@
 * 不完全な選好表に対応する
 * 多対1のDAアルゴリズムの実装
 
-難しそうなこと
+### 難しそうなこと
 
 * Stable Matchingを全出力する関数を作る（指数オーダらしい）
 * 男女の効用和を最大化 / 効用差を最小化するマッチングを考える
 * 同順を許した選好に対応する（進振りにおいて、学部は点数の同じ学生に優劣を付けないはず）
 
 
-## メモ
-
-NumPy arrayを使うとどの位速くなるのか計算する
 
 ## 文献
 
