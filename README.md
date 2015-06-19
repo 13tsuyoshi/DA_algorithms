@@ -2,6 +2,9 @@
 
 1対1のDAアルゴリズムは完成。
 
+要求仕様: https://github.com/OyamaZemi/exercises2015/tree/master/ex02
+実行結果: https://github.com/13tsuyoshi/DA_algorithms/blob/master/DA_Algorithms.ipynb
+
 今後簡単にできそうなこと
 
 * DAアルゴリズムから出てきたマッチングが、本当にStableかを確かめる（Blocking Pairが無いことを確かめる）関数を作る
