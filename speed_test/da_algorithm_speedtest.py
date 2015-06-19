@@ -4,16 +4,120 @@
 
 from __future__ import division
 import math
-import functools  #for python3
-from random import uniform, normalvariate, shuffle
+from random import shuffle
 import numpy as np
 import time
 np.set_printoptions(threshold=np.nan)
 
 
 def gale_shapley(applicant_prefers_input, host_prefers_input, **kwargs):
+     start1 = time.time()
      unmatch = kwargs.get('unmatch', True)
 
+     start3 = time.time()
+     # 選好表の型チェック
+     # listならnumpyへ変換
+     if isinstance(applicant_prefers_input, list):
+          applicant_preferences = np.array(applicant_prefers_input, dtype=int)
+
+     elif isinstance(applicant_prefers_input, np.ndarray):
+          applicant_preferences = applicant_prefers_input
+
+     else:
+          print("入力はlist型かnumpy.ndarray型にしてください")
+          return False
+
+     if isinstance(host_prefers_input, list):
+          host_preferences = np.array(host_prefers_input, dtype=int)
+
+     elif isinstance(host_prefers_input, np.ndarray):
+          host_preferences = host_prefers_input
+
+     else:
+          print("入力はlist型かnumpy.ndarray型にしてください")
+          return False
+
+     stop3 = time.time() - start3
+     print("変換は " + str(stop3) + " 秒でした")
+
+     # unmatchマークが入力されていない時は、選好表の列の最後にunmatch列をつくる
+     if not unmatch:
+          dummy_host = np.array(np.arange(app_row, 1))
+          applicant_preferences = np.c_[applicant_preferences, dummy_host]
+          dummy_applicant = np.array(np.arange(hos_row, 1))
+          host_preferences = np.c_[host_preferences, dummy_applicant]
+
+     # 選好表の行列数をチェック
+     app_row, app_col = applicant_preferences.shape
+     host_row, host_col = host_preferences.shape
+
+     if (app_row != host_col-1) or (host_row != app_col-1):
+          print("ERROR: 2つの選好表のサイズが不適切です")
+          return False
+
+     applicant_unmatched_mark = app_col-1
+     host_unmatched_mark = host_col-1
+
+     # ソート
+     start3 = time.time()
+     host_preferences = np.argsort(host_preferences, axis=-1)
+     stop3 = time.time() - start3
+     print("ソートは " + str(stop3) + " 秒でした")
+
+     # 未マッチング者のリスト
+     stack = list(range(app_row))
+
+     # マッチングを入れる（初期値は未マッチングflag）
+     applicant_matchings = np.zeros(app_row, dtype=int) + applicant_unmatched_mark
+     host_matchings = np.zeros(host_row, dtype=int) + host_unmatched_mark
+
+     # メインループ
+     start2 = time.time()
+     while len(stack) > 0:
+          # スタックから1人応募者を取り出す
+          applicant = stack.pop()
+
+          # 取り出した応募者の選好表
+          applicant_preference = applicant_preferences[applicant]
+
+          # 選好表の上から順番にプロポーズ
+          for host in applicant_preference:
+               #print(applicant, host)
+               # unmatched_markまでapplicantがマッチングできなければ、アンマッチ
+               if host == applicant_unmatched_mark:
+                    break
+
+               # プロポーズする相手の選好表
+               host_preference = host_preferences[host]
+
+               # 相手の選好表で、応募者と現在のマッチング相手のどちらが順位が高いのか比較する
+               rank_applicant = host_preference[applicant]
+               matched = host_matchings[host]
+               rank_matched = host_preference[matched]
+               
+               # もし受け入れ側が新しい応募者の方を好むなら
+               if rank_matched > rank_applicant:
+                    applicant_matchings[applicant] = host
+                    host_matchings[host] = applicant
+
+                    # 既にマッチしていた相手がダミーでなければ、マッチングを解除する
+                    if matched != host_unmatched_mark:
+                         applicant_matchings[matched] = applicant_unmatched_mark
+                         stack.append(matched)
+
+                    break
+
+     stop2 = time.time() - start2
+     print("LOOPは " + str(stop2) + " 秒でした")
+     return applicant_matchings, host_matchings
+
+
+# ループする際、前回誰までプロポーズしたかを覚えておく
+def gale_shapley2(applicant_prefers_input, host_prefers_input, **kwargs):
+     start1 = time.time()
+     unmatch = kwargs.get('unmatch', True)
+
+     start3 = time.time()
      # 選好表の型チェック
      # listならnumpyへ変換
      if isinstance(applicant_prefers_input, list):
@@ -55,8 +159,14 @@ def gale_shapley(applicant_prefers_input, host_prefers_input, **kwargs):
      applicant_unmatched_mark = app_col-1
      host_unmatched_mark = host_col-1
 
+     stop3 = time.time() - start3
+     print("変換は " + str(stop3) + " 秒でした")
+
      # ソート
+     start4 = time.time()
      host_preferences = np.argsort(host_preferences, axis=-1)
+     stop4 = time.time() - start4
+     print("ソートは " + str(stop4) + " 秒でした")
 
      # 未マッチング者のリスト
      stack = list(range(app_row))
@@ -66,6 +176,7 @@ def gale_shapley(applicant_prefers_input, host_prefers_input, **kwargs):
      host_matchings = np.zeros(host_row, dtype=int) + host_unmatched_mark
 
      # メインループ
+     start2 = time.time()
      next_start = np.zeros(app_row, dtype=int)
      while len(stack) > 0:
           # スタックから1人応募者を取り出す
@@ -102,6 +213,8 @@ def gale_shapley(applicant_prefers_input, host_prefers_input, **kwargs):
                     next_start[applicant] = index
                     break
 
+     stop2 = time.time() - start2
+     print("LOOPは " + str(stop2) + " 秒でした")
      return applicant_matchings, host_matchings
 
 
@@ -149,117 +262,33 @@ def pseudo_random_preference_table(row, col, n=1000, **kwargs):
      return li
 
 
-# 未修正
-"""
-# 可能なマッチングを全出力する
-def all_matching(size):
-     if size > 7:
-          print("sizeが大きすぎます")
-          return False
-
-     li = list(range(size))
-
-
-     def __matching_list(li):
-          if len(li) == 1:
-               return [li]
-
-          output = []
-          for index, element in enumerate(li):
-               li2 = li[:]
-               li2.pop(index)
-               m = __matching_list(li2)
-               for x in m:
-                    output.append([element] + x)
-
-          return output
-
-
-     def __make_dict(pattern):
-          size = len(li)
-          outdict = {}
-          for i in range(size):
-               outdict[i] = pattern[i]
-          return outdict
-
-     output = []
-
-     for pattern in __matching_list(li):
-          output.append(__make_dict(pattern))
-
-     return output
-
-
-# 可能な安定マッチングを全出力する
-def all_stable_matching(applicant_prefers_input, host_prefers_input):
-     # NumPy Arrayに変換
-     applicant_preferences = np.array(applicant_prefers_input, dtype=int)
-     host_preferences = np.array(host_prefers_input, dtype=int)
-
-     # 選好表の行列数をチェック
-     row, col = applicant_preferences.shape
-     row_host, col_host = host_preferences.shape
-     if row != col_host or col != row_host:
-          exit(-1)
-
-     if row > 7 or col > 7:
-          print("sizeが大きすぎます")
-          return False
-
-     matchings = all_matching(row)
-
-     output = []
-     for matching in matchings:
-          if is_stable_matching(matching, applicant_preferences, host_preferences):
-               output.append(matching)
-
-     return output
-
-
-# マッチングのスコアを、申し込み側 / 受け入れ側それぞれについて求める
-# 一番良い相手とペアになった時のスコアが(相手側の人数)ポイント、一番悪い相手とペアになった時のスコアが0ポイント
-def matching_score(matching, applicant_prefers_input, host_prefers_input):
-     # NumPy Arrayに変換
-     applicant_preferences = np.array(applicant_prefers_input, dtype=int)
-     host_preferences = np.array(host_prefers_input, dtype=int)
-
-     # 選好表の行列数をチェック
-     row, col = applicant_preferences.shape
-     row_host, col_host = host_preferences.shape
-     if row != col_host or col != row_host:
-          exit(-1)
-
-     applicants_score = 0
-     hosts_score = 0
-
-     for applicant, host in matching.items():
-          applicant_preference = applicant_preferences[applicant]
-          host_preference = host_preferences[host]
-
-          rank_host = np.where(applicant_preference == host)[0][0]
-          rank_applicant = np.where(host_preference == applicant)[0][0]
-
-          applicants_score += (col-1) - rank_host
-          hosts_score += (row-1) - rank_applicant
-
-     return [applicants_score, hosts_score]
-"""
-
 if __name__ == '__main__':
      #app_table = [[3, 1, 0, 4, 2], [3, 4, 2, 0, 1]]
      #hos_table = [[2, 0, 1], [0, 1, 2], [0, 2, 1], [0, 2, 1]]
      #app_table = [[0, 2, 1, 3], [2, 1, 3, 0], [3, 1, 0, 2]]
      #hos_table = [[3, 0, 2, 1], [2, 0, 1, 3], [2, 0, 3, 1]]
      
+
      start = time.time()
-     app_table = pseudo_random_preference_table(1000, 1000)
-     hos_table = pseudo_random_preference_table(1000, 1000)
+     app_table = pseudo_random_preference_table(2000, 2000)
+     hos_table = pseudo_random_preference_table(2000, 2000)
      stop = time.time() - start
      print("選好表生成は " + str(stop) + " 秒でした\n")
 
-     print("DAアルゴリズム スタート!")
+
+     print("GSアルゴリズム2 スタート!")
      start = time.time()
-     matching = gale_shapley(app_table, hos_table)
+     matching = gale_shapley2(app_table, hos_table)
+     stop = time.time() - start
+     print("ストップ！")
+     print("実行時間は " + str(stop) + " 秒でした\n")
+
+     #print(matching[0], "\n")
+     #print(matching[1])
+
+     print("GSアルゴリズム3 スタート!")
+     start = time.time()
+     matching = gale_shapley3(app_table, hos_table)
      stop = time.time() - start
      print("ストップ！")
      print("実行時間は " + str(stop) + " 秒でした\n")

@@ -69,7 +69,7 @@ def gale_shapley(applicant_prefers_input, host_prefers_input):
                     # 新しい応募者と、既にマッチング済みの相手の、受け入れ側における選好順位を比較
                     rank_matched = np.where(host_preference[:-1] == matched)[0][0]
                     rank_applicant = np.where(host_preference[:-1] == applicant)[0][0]
-                    print("Woman{0} さんの選好表におけるMan{1} さんの順位は {2}位, Man{3} さんの順位は {4}位".format(host, applicant, rank_applicant+1, host, rank_matched+1))
+                    print("Woman{0} さんの選好表におけるMan{1} さんの順位は {2}位, Man{3} さんの順位は {4}位".format(host, applicant, rank_applicant+1, matched, rank_matched+1))
 
                     # もし受け入れ側が新しい応募者の方を好むなら
                     if rank_matched > rank_applicant:
@@ -160,10 +160,9 @@ host_table = [[0, 1, 2, 3, 4],
 
 
 matching = gale_shapley(applicant_table, host_table)
-matching2 = {0: 1, 1: 0, 2: 2, 3: 4, 4: 3}
 
 print(is_stable_matching(matching, applicant_table, host_table))
-print(is_stable_matching(matching2, applicant_table, host_table))
+
 
 
 
