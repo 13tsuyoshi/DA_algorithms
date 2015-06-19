@@ -1,6 +1,5 @@
 """
 Tests for matching algorithms.
-
 """
 from numpy.testing import assert_array_equal
 
