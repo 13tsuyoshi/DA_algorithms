@@ -11,47 +11,35 @@ import time
 np.set_printoptions(threshold=np.nan)
 
 
+class CustomConditionError(Exception):
+    def __init__(self, message):
+        self.message = message
+
+
 def gale_shapley(applicant_prefers_input, host_prefers_input, **kwargs):
      unmatch = kwargs.get('unmatch', True)
 
-     # 選好表の型チェック
-     # listならnumpyへ変換
-     if isinstance(applicant_prefers_input, list):
-          applicant_preferences = np.array(applicant_prefers_input, dtype=int)
-
-     elif isinstance(applicant_prefers_input, np.ndarray):
-          applicant_preferences = applicant_prefers_input
-
-     else:
-          print("入力はlist型かnumpy.ndarray型にしてください")
-          return False
-
-     if isinstance(host_prefers_input, list):
-          host_preferences = np.array(host_prefers_input, dtype=int)
-
-     elif isinstance(host_prefers_input, np.ndarray):
-          host_preferences = host_prefers_input
-
-     else:
-          print("入力はlist型かnumpy.ndarray型にしてください")
-          return False
-
-     # unmatchマークが入力されていない時は、選好表の列の最後にunmatch列をつくる
-     if not unmatch:
-          dummy_host = np.array(np.arange(app_row, 1))
-          applicant_preferences = np.c_[applicant_preferences, dummy_host]
-          dummy_applicant = np.array(np.arange(hos_row, 1))
-          host_preferences = np.c_[host_preferences, dummy_applicant]
-
+     # 選好表の型チェック。listならnumpyへ変換
+     applicant_preferences = np.asarray(applicant_prefers_input, dtype=int)
+     host_preferences = np.asarray(host_prefers_input, dtype=int)
 
      # 選好表の行列数をチェック
      app_row, app_col = applicant_preferences.shape
      host_row, host_col = host_preferences.shape
 
-     if (app_row != host_col-1) or (host_row != app_col-1):
-          print("ERROR")
-          return False
+     # unmatchマークが入力されていない時は、選好表の列の最後にunmatch列をつくる
+     if not unmatch:
+          dummy_host = np.repeat(app_col+1, app_row)
+          dummy_applicant = np.repeat(host_col+1, host_row)
+          applicant_preferences = np.c_[applicant_preferences, dummy_host]
+          host_preferences = np.c_[host_preferences, dummy_applicant]
+          app_col += 1
+          host_col += 1
 
+
+     if (app_row != host_col-1) or (host_row != app_col-1):
+          raise CustomConditionError("選好表の行列数が不正です")
+     
      applicant_unmatched_mark = app_col-1
      host_unmatched_mark = host_col-1
 
@@ -62,8 +50,9 @@ def gale_shapley(applicant_prefers_input, host_prefers_input, **kwargs):
      stack = list(range(app_row))
 
      # マッチングを入れる（初期値は未マッチングflag）
-     applicant_matchings = np.zeros(app_row, dtype=int) + applicant_unmatched_mark
-     host_matchings = np.zeros(host_row, dtype=int) + host_unmatched_mark
+     applicant_matchings = np.repeat(applicant_unmatched_mark, app_row)
+     host_matchings = np.repeat(host_unmatched_mark, host_row)
+
 
      # メインループ
      next_start = np.zeros(app_row, dtype=int)
@@ -76,7 +65,6 @@ def gale_shapley(applicant_prefers_input, host_prefers_input, **kwargs):
 
           # 選好表の上から順番にプロポーズ
           for index, host in enumerate(applicant_preference[next_start[applicant]:]):
-               #print(applicant, host)
                # unmatched_markまでapplicantがマッチングできなければ、アンマッチ
                if host == applicant_unmatched_mark:
                     break
@@ -246,16 +234,17 @@ def matching_score(matching, applicant_prefers_input, host_prefers_input):
 """
 
 if __name__ == '__main__':
-     #app_table = [[3, 1, 0, 4, 2], [3, 4, 2, 0, 1]]
-     #hos_table = [[2, 0, 1], [0, 1, 2], [0, 2, 1], [0, 2, 1]]
+     #app_table = [[3, 1, 4, 0, 2], [3, 2, 4, 0, 1]]
+     #hos_table = [[0, 2, 1], [2, 0, 1], [0, 1, 2], [0, 1, 2]]
      #app_table = [[0, 2, 1, 3], [2, 1, 3, 0], [3, 1, 0, 2]]
      #hos_table = [[3, 0, 2, 1], [2, 0, 1, 3], [2, 0, 3, 1]]
      
      start = time.time()
-     app_table = pseudo_random_preference_table(1000, 1000)
-     hos_table = pseudo_random_preference_table(1000, 1000)
+     app_table = random_preference_table(1000, 1000)
+     hos_table = random_preference_table(1000, 1000)
      stop = time.time() - start
      print("選好表生成は " + str(stop) + " 秒でした\n")
+     
 
      print("DAアルゴリズム スタート!")
      start = time.time()
