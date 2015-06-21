@@ -4,7 +4,6 @@
 
 from __future__ import division
 import math
-import functools  #for python3
 from random import uniform, normalvariate, shuffle
 import numpy as np
 import time
@@ -36,7 +35,6 @@ def gale_shapley(applicant_prefers_input, host_prefers_input, **kwargs):
         app_col += 1
         host_col += 1
 
-
     if (app_row != host_col-1) or (host_row != app_col-1):
         raise CustomConditionError("選好表の行列数が不正です")
 
@@ -52,7 +50,6 @@ def gale_shapley(applicant_prefers_input, host_prefers_input, **kwargs):
     # マッチングを入れる（初期値は未マッチングflag）
     applicant_matchings = np.repeat(applicant_unmatched_mark, app_row)
     host_matchings = np.repeat(host_unmatched_mark, host_row)
-
 
     # メインループ
     next_start = np.zeros(app_row, dtype=int)
@@ -106,7 +103,7 @@ def random_preference_table(row, col, **kwargs):
 
         return li
 
-    else:     
+    else:
         def __sshuffle(li):
             shuffle(li)
             return li
@@ -233,10 +230,10 @@ def matching_score(matching, applicant_prefers_input, host_prefers_input):
     """
 
 if __name__ == '__main__':
-    #app_table = [[3, 1, 4, 0, 2], [3, 2, 4, 0, 1]]
-    #hos_table = [[0, 2, 1], [2, 0, 1], [0, 1, 2], [0, 1, 2]]
-    #app_table = [[0, 2, 1, 3], [2, 1, 3, 0], [3, 1, 0, 2]]
-    #hos_table = [[3, 0, 2, 1], [2, 0, 1, 3], [2, 0, 3, 1]]
+    # app_table = [[3, 1, 4, 0, 2], [3, 2, 4, 0, 1]]
+    # hos_table = [[0, 2, 1], [2, 0, 1], [0, 1, 2], [0, 1, 2]]
+    # app_table = [[0, 2, 1, 3], [2, 1, 3, 0], [3, 1, 0, 2]]
+    # hos_table = [[3, 0, 2, 1], [2, 0, 1, 3], [2, 0, 3, 1]]
 
     start = time.time()
     app_table = pseudo_random_preference_table(1000, 1000)
@@ -252,8 +249,8 @@ if __name__ == '__main__':
     print("ストップ！")
     print("実行時間は " + str(stop) + " 秒でした\n")
 
-    #print(matching[0], "\n")
-    #print(matching[1])
+    # print(matching[0], "\n")
+    # print(matching[1])
 
 
 
