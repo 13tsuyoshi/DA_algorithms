@@ -2,8 +2,8 @@
 #from https://github.com/NlGG/matching
 def deferred_acceptance(m_prefs, f_prefs,caps=None):
     mnum = len(m_prefs) #さらにmnumをunmatchedにも対応させている
-    single=range(mnum)  #最初はみんな独身
     fnum = len(f_prefs)
+    single=range(mnum)  #最初はみんな独身
     married = {}
     have = [mnum for i in range(fnum)]#最初は皆受け入れるので、付き合っている人は最も序列の低いunmatchedとしてのmnumで統一して全部入れる
     down = [0 for i in range(mnum)]#０で全部入れる。
@@ -35,13 +35,14 @@ def deferred_acceptance(m_prefs, f_prefs,caps=None):
 
     for i in have:
         if i != mnum:
-            married.update({i: have.index(i)})
+            married.update({i: have.index(i)})#男各々iに対して順番に最終的に付き合っていた女性と結婚させる{0:2,1:18,2:28,3:14,}みたいに
 
     married = married.items()#The method items() returns a list of dict's (key, value) tuple pairs
                              #例えば、dict = {'Name': 'Zara', 'Age': 7}で、dict.items()とすると[('Age', 7), ('Name', 'Zara')]と返す
+                             #ここでは、[(0,2),(1,18),(2,28),(3,14)]みたいになる
     m_matched_computed = []
     for i in range(mnum):
-        m_matched_computed.append(married[i][1])
+        m_matched_computed.append(married[i][1])#女性の番号を割り出す。
     f_matched_computed = have
     
     return m_matched_computed, f_matched_computed
